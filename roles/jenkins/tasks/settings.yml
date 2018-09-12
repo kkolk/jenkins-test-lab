@@ -55,6 +55,14 @@
     line: '{{ jenkins_http_port_param }}={{ jenkins_http_port }}'
   register: jenkins_http_config
 
+- name: Set number of executioners on master.
+  lineinfile:
+    backrefs: yes
+    dest: "{{ jenkins_home }}/config.xml"
+    regexp: '<numExecutors>'
+    line: "<numExecutors>{{ jenkins_numExecutors }}</numExecutors>"
+  notify: restart jenkins
+
 - name: Ensure jenkins_home {{ jenkins_home }} exists
   file:
     path: "{{ jenkins_home }}"
@@ -79,7 +87,25 @@
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: 0775
-  register: jenkins_slave_config
+  notify: restart jenkins
+
+# Not currently using, but leaving in place for future testing of CASC plugin
+# - name: Create CASC config directory.
+#   file:
+#     path: "{{ jenkins_casc_config }}"
+#     state: directory
+#     owner: "{{ jenkins_process_user }}"
+#     group: "{{ jenkins_process_group }}"
+#     mode: 0775
+
+# - name: Copy jenkins.yaml CASC config to server
+#   template:
+#     src: jenkins.yaml
+#     dest: "{{ jenkins_casc_config }}"
+#     owner: "{{ jenkins_process_user }}"
+#     group: "{{ jenkins_process_group }}"
+#     mode: 0775
+#   notify: restart jenkins
 
 - name: Configure Windows Worker
   template:
@@ -88,7 +114,7 @@
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: 0775
-  register: jenkins_worker_config
+  notify: restart jenkins
 
 - name: Trigger handlers immediately in case Jenkins was installed
   meta: flush_handlers
@@ -99,6 +125,4 @@
     state: restarted
   when: (jenkins_users_config is defined and jenkins_users_config.changed) or
         (jenkins_http_config is defined and jenkins_http_config.changed) or
-        (jenkins_home_config is defined and jenkins_home_config.changed) or
-        (jenkins_slave_config is defined and jenkins_slave_config.changed) or
-        (jenkins_worker_config is defined and jenkins_worker_config.changed)
+        (jenkins_home_config is defined and jenkins_home_config.changed)

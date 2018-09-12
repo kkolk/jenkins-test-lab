@@ -30,6 +30,7 @@ jenkins_admin_token_file: ""
 
 jenkins_process_user: jenkins
 jenkins_process_group: "{{ jenkins_process_user }}"
+jenkins_numExecutors: 2
 
 jenkins_init_changes:
   - option: "JENKINS_ARGS"
