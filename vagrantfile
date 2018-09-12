@@ -46,8 +46,9 @@ Vagrant.configure("2") do |config|
     # winworker.vm.provision "shell", inline:"Install-WindowsFeature NET-Framework-Core"
     # Jenkins needs JAVA to be installed
     winworker.vm.provision "shell", path:"scripts/InstallJava.ps1"
-    # Jenkins agent
+    # Jenkins agent service
     winworker.vm.provision "shell", path:"scripts/InstallJenkinsService.ps1"
+    
     # winworker.vm.provision "shell", path:"scripts/UpdateLocalAccountTokenFilterPolicy.ps1"
     # these steps require that you have the vagrant-reload plugin ( vagrant plugin install vagrant-reload )
     # winworker.vm.provision "shell", path:"scripts/DisableNTLMv2Authentication.ps1"
