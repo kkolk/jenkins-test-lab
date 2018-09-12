@@ -1,0 +1,10 @@
+- name: Install Jenkins
+  hosts: all
+  connection: ssh
+  become: true
+
+  roles:
+    - role: java
+      become: yes
+    - role: jenkins
+      become: yes

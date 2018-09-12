@@ -1,0 +1,94 @@
+---
+# Environment Setup for CASC
+- name: Ensure environment file exists
+  file:
+    path: "{{ environment_file }}"
+    owner: "{{ environment_file_owner }}"
+    group: "{{ environment_file_group }}"
+    state: touch
+  register: environment_file_result
+  changed_when: environment_file_result.diff.before.state != "file"
+
+- name: Remove previous values
+  lineinfile:
+    dest: "{{ environment_file }}"
+    regexp: '^{{ item.key }}\ ?='
+    state: absent
+  with_dict: "{{ environment_config }}"
+
+- name: Configure environment values
+  lineinfile:
+    dest: "{{ environment_file }}"
+    line: "{{ item.key }}='{{ item.value }}'"
+  with_dict: "{{ environment_config }}"
+
+# Jenkins Setup
+- name: Configure TCP Slave Agent Port
+  template:
+    src: tcp-slave-agent-port.groovy
+    dest: "{{ jenkins_home }}/init.groovy.d/tcp-slave-agent-port.groovy"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0775
+  register: jenkins_slave_config
+
+- name: Modify variables in init file
+  lineinfile:
+    dest: "{{ jenkins_init_file }}"
+    insertafter: '^{{ item.option }}='
+    regexp: '^{{ item.option}}=\"\${{ item.option }} '
+    line: '{{ item.option }}="${{ item.option }} {{ item.value }}"'
+    state: present
+  with_items:
+      "{{ jenkins_init_changes }}"
+  register: jenkins_init_prefix
+
+- name: Set the Jenkins home directory
+  lineinfile:
+    dest: "{{ jenkins_init_file }}"
+    regexp: '^JENKINS_HOME=.*'
+    line: 'JENKINS_HOME={{ jenkins_home }}'
+  register: jenkins_home_config
+
+- name: Immediately restart Jenkins on init config changes.
+  service: 
+    name: jenkins 
+    state: restarted
+  when: jenkins_init_prefix.changed
+
+- name: Set HTTP port in Jenkins config.
+  lineinfile:
+    backrefs: yes
+    dest: "{{ jenkins_init_file }}"
+    regexp: '^{{ jenkins_http_port_param }}='
+    line: '{{ jenkins_http_port_param }}={{ jenkins_http_port }}'
+  register: jenkins_http_config
+
+- name: Ensure jenkins_home {{ jenkins_home }} exists
+  file:
+    path: "{{ jenkins_home }}"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: u+rwx
+    follow: true
+
+- name: Create custom init scripts directory.
+  file:
+    path: "{{ jenkins_home }}/init.groovy.d"
+    state: directory
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0775
+
+- name: Trigger handlers immediately in case Jenkins was installed
+  meta: flush_handlers
+
+- name: Immediately restart Jenkins when certain changes are made.
+  service: 
+    name: jenkins 
+    state: restarted
+  when: (jenkins_users_config is defined and jenkins_users_config.changed) or
+        (jenkins_http_config is defined and jenkins_http_config.changed) or
+        (jenkins_home_config is defined and jenkins_home_config.changed) or
+        (jenkins_slave_config is defined and jenkins_slave_config.changed)

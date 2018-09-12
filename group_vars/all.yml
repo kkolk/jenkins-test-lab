@@ -1,0 +1,64 @@
+---
+# ---- JAVA ROLE ----
+# Set java_packages if you would like to use a different version than the
+# default (OpenJDK 1.7).
+# java_packages: []
+
+java_home: ""
+
+# ---- JENKINS ROLE ----
+# Optional method of pinning a specific version of Jenkins and/or overriding the
+# default Jenkins packaging URL.
+# jenkins_version: "1.644"
+# jenkins_pkg_url: "https://www.example.com"
+
+# Change this to `latest` to update Jenkins if a newer version is available.
+jenkins_package_state: present
+
+jenkins_connection_delay: 5
+jenkins_connection_retries: 60
+jenkins_home: /var/lib/jenkins
+jenkins_casc_config: "{{ jenkins_home }}/casc_configs/jenkins.yaml"
+# uses xip.io for wildcard DNS resolution - http://xip.io/
+jenkins_hostname: jenkins.192.168.100.10.xip.io
+jenkins_http_port: 8080
+jenkins_slave_agent_port: 10000
+jenkins_jar_location: /opt/jenkins-cli.jar
+jenkins_url_prefix: ""
+jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
+
+jenkins_plugins:
+  - powershell
+  - git
+  - configuration-as-code
+jenkins_plugins_state: present
+jenkins_plugin_updates_expiration: 86400
+jenkins_plugin_timeout: 30
+jenkins_plugins_install_dependencies: yes
+
+jenkins_admin_username: jenkins
+jenkins_admin_password: jenkins
+jenkins_admin_password_file: ""
+jenkins_admin_token: ""
+jenkins_admin_token_file: ""
+
+jenkins_process_user: jenkins
+jenkins_process_group: "{{ jenkins_process_user }}"
+
+jenkins_init_changes:
+  - option: "JENKINS_ARGS"
+    value: "--prefix={{ jenkins_url_prefix }}"
+  - option: "{{ jenkins_java_options_env_var }}"
+    value: "{{ jenkins_java_options }}"
+
+
+# ---- Environment Setup ----
+
+# Path to the environment file
+environment_file: /etc/environment
+environment_file_owner: root
+environment_file_group: root
+# A dictionary of config parameters i.e
+environment_config:
+  CASC_JENKINS_CONFIG: "{{ jenkins_casc_config }}"
+  JENKINS_SLAVE_AGENT_PORT: "{{ jenkins_slave_agent_port }}"
