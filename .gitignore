@@ -271,3 +271,6 @@ __pycache__/
 
 # Artifact folders
 .artifacts/
+
+# Logs
+*.log
