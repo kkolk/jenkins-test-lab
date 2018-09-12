@@ -81,6 +81,15 @@
     mode: 0775
   register: jenkins_slave_config
 
+- name: Configure Windows Worker
+  template:
+    src: create-windows-worker.groovy
+    dest: "{{ jenkins_home }}/init.groovy.d/create-windows-worker.groovy"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0775
+  register: jenkins_worker_config
+
 - name: Trigger handlers immediately in case Jenkins was installed
   meta: flush_handlers
 
@@ -91,4 +100,5 @@
   when: (jenkins_users_config is defined and jenkins_users_config.changed) or
         (jenkins_http_config is defined and jenkins_http_config.changed) or
         (jenkins_home_config is defined and jenkins_home_config.changed) or
-        (jenkins_slave_config is defined and jenkins_slave_config.changed)
+        (jenkins_slave_config is defined and jenkins_slave_config.changed) or
+        (jenkins_worker_config is defined and jenkins_worker_config.changed)
