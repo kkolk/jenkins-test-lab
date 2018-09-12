@@ -22,16 +22,7 @@
     line: "{{ item.key }}='{{ item.value }}'"
   with_dict: "{{ environment_config }}"
 
-# Jenkins Setup
-- name: Configure TCP Slave Agent Port
-  template:
-    src: tcp-slave-agent-port.groovy
-    dest: "{{ jenkins_home }}/init.groovy.d/tcp-slave-agent-port.groovy"
-    owner: "{{ jenkins_process_user }}"
-    group: "{{ jenkins_process_group }}"
-    mode: 0775
-  register: jenkins_slave_config
-
+# Jenkins Setup  
 - name: Modify variables in init file
   lineinfile:
     dest: "{{ jenkins_init_file }}"
@@ -80,6 +71,15 @@
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: 0775
+
+- name: Configure TCP Slave Agent Port
+  template:
+    src: tcp-slave-agent-port.groovy
+    dest: "{{ jenkins_home }}/init.groovy.d/tcp-slave-agent-port.groovy"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0775
+  register: jenkins_slave_config
 
 - name: Trigger handlers immediately in case Jenkins was installed
   meta: flush_handlers
