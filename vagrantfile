@@ -34,17 +34,32 @@ Vagrant.configure("2") do |config|
   # Provision Windows worker for Jenkins
   config.vm.define "winworker" do |winworker|
     winworker.vm.provider "virtualbox" do |vb|
+    # install runs really slow with only 1 core.
+      vb.cpus = "2"
     # box image we are using appears to include vb.gui = true
     # forcing it to false.
       vb.gui = false
     end
     winworker.vm.box = "jacqinthebox/windowsserver2016core"
+    # Resizing the disk in order to make sure that we have sufficent space for build tools.
+    winworker.disksize.size = '55gb'
     winworker.vm.network "private_network", ip: "192.168.100.20"
     winworker.vm.hostname = "winworker"
+    # Set the partition to our new disk max size
+    winworker.vm.provision "shell", path:"scripts/ResizePartitionToMax.ps1"
+    # Setup ansible remoting for future use
     winworker.vm.provision "shell", path:"scripts/ConfigureRemotingForAnsible.ps1"
+    # Install Build Tools
+    winworker.vm.provision "shell", path: "scripts/InstallVS2017BuildTools.ps1"
     # Jenkins needs JAVA to be installed
     winworker.vm.provision "shell", path:"scripts/InstallJava.ps1"
     # Jenkins agent service
     winworker.vm.provision "shell", path:"scripts/InstallJenkinsService.ps1"
+    # Chocolately Install (for quick provisioning required ASP.NET MVC packages)
+    winworker.vm.provision "shell", path:"scripts/InstallChocolatey.ps1"
+    # Add Choco to path so we don't have to reboot.
+    # winworker.vm.provision "shell", inline: 'SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"'
+    # Install additional packages
+    winworker.vm.provision "shell", inline: "choco install aspnetmvc4.install aspnetmvc git dotnetfx netfx-4.7.2-devpack windows-sdk-10.1 -y"
   end
 end
