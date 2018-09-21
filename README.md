@@ -11,13 +11,14 @@ This environment uses vagrant to deploy a local Jenkins instance and windows wor
 * Vagrant
 * Python
 
-You will also need the [Vagrant Host Manager plugin](https://github.com/devopsgroup-io/vagrant-hostmanager) and the [Vagrant Disk Size plugin](http://github.com/sprotheroe/vagrant-disksize/), you can install these with the following command:
+You will also need the [Vagrant Host Manager plugin](https://github.com/devopsgroup-io/vagrant-hostmanager), [Vagrant Reload Provisioner](https://github.com/aidanns/vagrant-reload) and the [Vagrant Disk Size plugin](http://github.com/sprotheroe/vagrant-disksize/), you can install these with the following command:
 
 ```
 vagrant plugin install vagrant-hostmanager
 vagrant plugin install vagrant-disksize
+vagrant plugin install vagrant-reload
 ```
 
-See <https://github.com/devopsgroup-io/vagrant-hostmanager> and <https://github.com/sprotheroe/vagrant-disksize> for more information on these plugins.   Without these plugins you will get errors regarding unknown configuration sections.
+See <https://github.com/devopsgroup-io/vagrant-hostmanager>, <https://github.com/aidanns/vagrant-reload>, and <https://github.com/sprotheroe/vagrant-disksize> for more information on these plugins.   Without these plugins you will get errors regarding unknown configuration sections.
 
 This demo assumes that 192.168.100.0/24 is available for host only network use.  You will need to adjust the vagrantfile if this is not the case.
