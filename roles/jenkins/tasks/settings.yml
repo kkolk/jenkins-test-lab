@@ -107,6 +107,15 @@
 #     mode: 0775
 #   notify: restart jenkins
 
+- name: Configure MSBuild Tool
+  template:
+    src: config-msbuild-tool.groovy
+    dest: "{{ jenkins_home }}/init.groovy.d/config-msbuild-tool.groovy"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0775
+  notify: restart jenkins
+
 - name: Configure Windows Worker
   template:
     src: create-windows-worker.groovy
