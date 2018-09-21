@@ -43,7 +43,7 @@ def gitToolLocation = new ToolLocationNodeProperty.ToolLocation(gitToolDescripto
 
 // Setup MSBuild Path
 def msBuildDescriptor = Jenkins.getInstance().getDescriptor("hudson.plugins.msbuild.MsBuildInstallation");
-def msBuildToolLocation = new ToolLocationNodeProperty.ToolLocation(msBuildDescriptor, "Default", "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\MSBuild\\15.0\\bin\\MSBuild.exe")
+def msBuildToolLocation = new ToolLocationNodeProperty.ToolLocation(msBuildDescriptor, "MSBuild", "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\MSBuild\\15.0\\bin\\MSBuild.exe")
 
 // Create tool locations list
 List<Entry> tools = new ArrayList<Entry>();
