@@ -18,6 +18,6 @@ vagrant plugin install vagrant-hostmanager
 vagrant plugin install vagrant-disksize
 ```
 
-See <https://github.com/devopsgroup-io/vagrant-hostmanager> and <https://github.com/sprotheroe/vagrant-disksize> for more information on these plugins.
+See <https://github.com/devopsgroup-io/vagrant-hostmanager> and <https://github.com/sprotheroe/vagrant-disksize> for more information on these plugins.   Without these plugins you will get errors regarding unknown configuration sections.
 
 This demo assumes that 192.168.100.0/24 is available for host only network use.  You will need to adjust the vagrantfile if this is not the case.
