@@ -60,7 +60,7 @@ This will complete the following actions:
       * Workload: Web Build Tools
       * Workload: .NET Core Build Tools
 
-Once completed you are now ready to log into Jenkins and add a .NET MVC application to be built on the Windows worker.
+Once completed you are now ready to log into Jenkins and add a .NET MVC application to be built on the Windows worker.  Initial account is Username: Jenkins, Password: Jenkins.  This can be changed by altering the group_vars/all.yml prior to executing vagrant up.
 
 As a test I have a sample application from Microsoft cloned here with a JenkinsFile added which you can import as a new pipeline or multibranch pipeline project:
 
