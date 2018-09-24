@@ -9,7 +9,6 @@ This environment uses vagrant to deploy a local Jenkins instance and windows wor
 
 * VirtualBox
 * Vagrant
-* Python
 
 You will also need the [Vagrant Host Manager plugin](https://github.com/devopsgroup-io/vagrant-hostmanager), [Vagrant Reload Provisioner](https://github.com/aidanns/vagrant-reload) and the [Vagrant Disk Size plugin](http://github.com/sprotheroe/vagrant-disksize/), you can install these with the following command once Vagrant is installed:
 
