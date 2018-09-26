@@ -1,11 +1,9 @@
 # Jenkins Test Lab
-Lab environment for various Jenkins Tests
-
-## Requirements
-
-This environment uses vagrant to deploy a local Jenkins instance and windows worker node.
+Lab environment for various Jenkins Tests.  This environment uses vagrant to deploy a local Jenkins instance and windows worker node.
 
 ### Pre-requisites
+
+While this can easily be adjusted to another target other than virtualbox by changing providers in Vagrant, if you have no existing infrastructure this will be the fastest way to get started:
 
 * VirtualBox
 * Vagrant
