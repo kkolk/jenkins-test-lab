@@ -47,22 +47,6 @@
     state: restarted
   when: jenkins_init_prefix.changed
 
-- name: Set HTTP port in Jenkins config.
-  lineinfile:
-    backrefs: yes
-    dest: "{{ jenkins_init_file }}"
-    regexp: '^{{ jenkins_http_port_param }}='
-    line: '{{ jenkins_http_port_param }}={{ jenkins_http_port }}'
-  register: jenkins_http_config
-
-- name: Set number of executioners on master.
-  lineinfile:
-    backrefs: yes
-    dest: "{{ jenkins_home }}/config.xml"
-    regexp: '<numExecutors>'
-    line: "<numExecutors>{{ jenkins_numExecutors }}</numExecutors>"
-  notify: restart jenkins
-
 - name: Ensure jenkins_home {{ jenkins_home }} exists
   file:
     path: "{{ jenkins_home }}"
@@ -71,6 +55,14 @@
     group: jenkins
     mode: u+rwx
     follow: true
+
+- name: Set HTTP port in Jenkins config.
+  lineinfile:
+    backrefs: yes
+    dest: "{{ jenkins_init_file }}"
+    regexp: '^{{ jenkins_http_port_param }}='
+    line: '{{ jenkins_http_port_param }}={{ jenkins_http_port }}'
+  register: jenkins_http_config
 
 - name: Create custom init scripts directory.
   file:
