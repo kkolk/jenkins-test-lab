@@ -1,0 +1,47 @@
+- name: Ensure pyOpenSSL is available
+  pip:
+    name: pyOpenSSL
+    state: present
+
+- name: Ensure directory exists for local self-signed TLS certs.
+  file:
+    path: "{{ jenkins_ssl_path }}"
+    state: directory
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    recurse: true
+
+- name: Generate an OpenSSL private key.
+  openssl_privatekey:
+    path: "{{ jenkins_private_key_path }}"
+
+- name: Generate an OpenSSL CSR.
+  openssl_csr:
+    path: "{{ jenkins_ssl_path }}/{{ jenkins_hostname }}.csr"
+    privatekey_path: "{{ jenkins_private_key_path }}"
+    common_name: "{{ jenkins_hostname }}"
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: "{{ jenkins_certificate_path }}"
+    privatekey_path: "{{ jenkins_private_key_path }}"
+    csr_path: "{{ jenkins_ssl_path }}/{{ jenkins_hostname }}.csr"
+    provider: selfsigned
+
+- name: Fetch certificate
+  command: "cat {{ jenkins_certificate_path }}"
+  register: cert_contents
+
+- name: Fetch certificate private key
+  command: "cat {{ jenkins_private_key_path }}"
+  register: private_key_contents
+
+- name: Setup Java Keystore
+  java_keystore:
+    name: "{{ jenkins_hostname }}"
+    certificate: "{{ cert_contents.stdout }}"
+    private_key: "{{ private_key_contents.stdout }}"
+    password: "{{ jenkins_keystore_passphrase }}"
+    dest: "{{ jenkins_keystore_path }}"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"

@@ -19,14 +19,28 @@ jenkins_connection_delay: 5
 jenkins_connection_retries: 60
 jenkins_home: /var/lib/jenkins
 jenkins_casc_config: "{{ jenkins_home }}/casc_configs/jenkins.yaml"
+
 # uses xip.io for wildcard DNS resolution - http://xip.io/
 jenkins_hostname: jenkins.192.168.100.10.xip.io
 jenkins_http_port: 8080
-jenkins_slave_agent_port: 10000
-jenkins_jar_location: /opt/jenkins-cli.jar
-jenkins_url_prefix: ""
-jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
+jenkins_https_port: 8443
 
+# If not using self-signed cert set paths to cert and key, additional steps will be needed
+# to retrieve certificates to server prior to this role installing
+# These steps have not yet been created.
+jenkins_self_signed_cert: true
+jenkins_ssl_path: /var/lib/jenkins/ssl
+jenkins_certificate_path: "{{ jenkins_ssl_path }}/cert.pem"
+jenkins_private_key_path: "{{ jenkins_ssl_path }}/key.pem"
+jenkins_keystore_path: "{{ jenkins_ssl_path }}/jenkins_keystore.jks"
+jenkins_keystore_passphrase: thisshouldbechanged
+
+# Used for windows slaves
+jenkins_slave_agent_port: 10000
+
+jenkins_jar_location: /opt/jenkins-cli.jar
+jenkins_url_prefix:
+jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
 jenkins_plugins:
   - powershell
   - git
@@ -52,7 +66,10 @@ jenkins_process_group: "{{ jenkins_process_user }}"
 
 jenkins_init_changes:
   - option: "JENKINS_ARGS"
-    value: "--prefix={{ jenkins_url_prefix }}"
+    value: "{% if jenkins_url_prefix %}--prefix={{ jenkins_url_prefix }}{% endif %} 
+            {% if jenkins_https_port %}--httpsPort={{ jenkins_https_port }}{% endif %}
+            {% if jenkins_https_port and jenkins_keystore_path %}--httpsKeyStore={{ jenkins_keystore_path }}{% endif %}
+            {% if jenkins_https_port and jenkins_keystore_passphrase %}--httpsKeyStorePassword={{ jenkins_keystore_passphrase }}{% endif %}"
   - option: "{{ jenkins_java_options_env_var }}"
     value: "{{ jenkins_java_options }}"
 
