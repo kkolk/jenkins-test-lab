@@ -1,4 +1,4 @@
-- name: Install Jenkins
+- name: Install Jenkins Worker Node
   hosts: all
   connection: ssh
   become: true
@@ -8,3 +8,14 @@
 
     - role: maven
       maven_version: '3.6.0'
+
+  tasks:
+    - name: Install additional requirements
+      package:
+        name:
+          - ant
+          - zip
+          - unzip
+          - bzip2
+          - git
+        state: present
