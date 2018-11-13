@@ -6,7 +6,7 @@ If(!(test-path $downloadToPath))
       New-Item -ItemType Directory -Force -Path $downloadToPath
 }
 
-$remoteFileLocation = "http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-windows-x64.exe"
+$remoteFileLocation = "https://download.oracle.com/otn-pub/java/jdk/8u192-b12/750e1c8617c5452694857ad95c3ee230/jdk-8u192-windows-x64.exe"
 
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
     
