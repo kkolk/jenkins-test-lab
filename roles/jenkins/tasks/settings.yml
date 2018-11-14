@@ -117,6 +117,33 @@
     mode: 0775
   notify: restart jenkins
 
+- name: Generate SSH key for worker authentication
+  shell: ssh-keygen -b 2048 -t rsa -f "{{ jenkins_home }}"/secrets/ssh_worker_id_rsa -q -N ""
+  args:
+    creates: "{{ jenkins_home }}/secrets/ssh_worker_id_rsa"
+
+- name: Set worker SSH key ownership
+  file: 
+    path: "{{ jenkins_home }}/secrets/ssh_worker_id_rsa"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0600
+
+- name: Set worker SSH certificate ownership
+  file: 
+    path: "{{ jenkins_home }}/secrets/ssh_worker_id_rsa.pub"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+
+- name: Configure SSH Worker credential
+  template:
+    src: create-ssh-credential.groovy
+    dest: "{{ jenkins_home }}/init.groovy.d/create-ssh-credential.groovy"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: 0775
+  notify: restart jenkins
+
 - name: Trigger handlers immediately in case Jenkins was installed
   meta: flush_handlers
 

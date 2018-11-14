@@ -1,4 +1,4 @@
-$downloadToPath = "C:\tmp\jdk-8u181-windows-x64.exe"
+$downloadToPath = "C:\tmp\jdk-8u192-windows-x64.exe"
 
 # Make sure download path is available
 If(!(test-path $downloadToPath))
@@ -20,4 +20,4 @@ $session.Cookies.Add($cookie);
 
 Invoke-WebRequest $remoteFileLocation -WebSession $session -TimeoutSec 900 -OutFile $downloadToPath
 
-Start-Process -Wait -FilePath $downloadToPath -ArgumentList '/s INSTALL_SILENT=1 STATIC=0 AUTO_UPDATE=0 WEB_JAVA=1 WEB_JAVA_SECURITY_LEVEL=H WEB_ANALYTICS=0 EULA=0 REBOOT=0 NOSTARTMENU=0 SPONSORS=0 /L c:\tmp\jre-install.log'
+Start-Process -Wait -FilePath $downloadToPath -ArgumentList "/s INSTALL_SILENT=1 STATIC=0 AUTO_UPDATE=0 WEB_JAVA=1 WEB_JAVA_SECURITY_LEVEL=H WEB_ANALYTICS=0 EULA=0 REBOOT=0 NOSTARTMENU=0 SPONSORS=0 /L c:\tmp\jre-install.log"
