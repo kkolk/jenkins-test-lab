@@ -50,7 +50,7 @@ jenkins_plugins:
   - pipeline-multibranch-defaults
   - ansible
   - ansicolor
-  - ssh-agent
+  - ssh-slaves
   # disabling this plugin for now as it's not used.
   # - configuration-as-code
 jenkins_plugins_state: present
